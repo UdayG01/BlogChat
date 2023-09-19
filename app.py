@@ -1,6 +1,10 @@
 
-# from huggingface_hub import hf_hub_download
-# from langchain.llms import LlamaCpp
+
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+import sqlite3
 
 import streamlit as st
 
@@ -23,7 +27,6 @@ from htmlTemplates import css, bot_template, user_template
 import os
 huggingfacehub_api_token = os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
 
-from huggingface_hub import hf_hub_download
 
 repo_id = "tiiuae/falcon-7b"
 llm = HuggingFaceHub(huggingfacehub_api_token=huggingfacehub_api_token, 
