@@ -31,7 +31,7 @@ huggingfacehub_api_token = os.environ["HUGGINGFACEHUB_API_TOKEN"] = "hf_HfKtmkog
 repo_id = "tiiuae/falcon-7b"
 llm = HuggingFaceHub(huggingfacehub_api_token=huggingfacehub_api_token, 
                      repo_id=repo_id, 
-                     model_kwargs={"temperature":0, "max_new_tokens":350})
+                     model_kwargs={"temperature":0.1, "max_new_tokens":350})
 
 def get_blog_text(blog_url):
   text = ""
