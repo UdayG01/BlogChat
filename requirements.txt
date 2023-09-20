@@ -16,3 +16,4 @@ torch==2.0.1
 transformers==4.33.2
 unstructured==0.10.15
 pysqlite3-binary
+llama-cpp-python
