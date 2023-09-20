@@ -21,6 +21,9 @@ from langchain import PromptTemplate, LLMChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain import HuggingFaceHub
+from huggingface_hub import hf_hub_download
+
+from langchain.llms import LlamaCpp
 
 from htmlTemplates import css, bot_template, user_template
 
@@ -28,10 +31,10 @@ import os
 huggingfacehub_api_token = os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
 
 
-repo_id = "tiiuae/falcon-7b"
-llm = HuggingFaceHub(huggingfacehub_api_token=huggingfacehub_api_token, 
-                     repo_id=repo_id, 
-                     model_kwargs={"max_new_tokens":256})
+model_name_or_path = "TheBloke/Llama-2-7b-Chat-GGUF"
+model_basename = "llama-2-7b-chat.Q2_K.gguf"
+
+model_path = hf_hub_download(repo_id=model_name_or_path, filename=model_basename)
 
 def get_blog_text(blog_url):
   text = ""
@@ -55,18 +58,18 @@ def get_vectorstore(docs):
   return db
 
 def get_conversation_chain(vectorstore):
-  # n_gpu_layers = 40
-  # n_batch = 512
+  n_gpu_layers = 40
+  n_batch = 512
 
-  # Loading model,
-  # llm = LlamaCpp(
-  #     model_path=model_path,
-  #     max_tokens=256,
-  #     n_gpu_layers=n_gpu_layers,
-  #     n_batch=n_batch,
-  #     n_ctx=2048,
-  #     verbose=False,
-  # )
+  Loading model,
+  llm = LlamaCpp(
+      model_path=model_path,
+      max_tokens=256,
+      n_gpu_layers=n_gpu_layers,
+      n_batch=n_batch,
+      n_ctx=2048,
+      verbose=False,
+  )
 
   # repo_id = "google/flan-t5-xxl"
   # llm = HuggingFaceHub(repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_length": 64})
