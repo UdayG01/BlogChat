@@ -18,6 +18,3 @@ unstructured==0.10.15
 pysqlite3-binary
 llama-cpp-python
 ctransformers
-einops
-accelerate
-bitsandbytes
