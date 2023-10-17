@@ -22,6 +22,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain import HuggingFaceHub
 from huggingface_hub import hf_hub_download
+from langchain.llms import CTransformers
 
 from langchain.llms import LlamaCpp
 
@@ -42,21 +43,21 @@ import torch
 
 model = "tiiuae/falcon-7b-instruct" #tiiuae/falcon-40b-instruct
 
-tokenizer = AutoTokenizer.from_pretrained(model)
+# tokenizer = AutoTokenizer.from_pretrained(model)
 
-pipeline = pipeline(
-    "text-generation", #task
-    model=model,
-    tokenizer=tokenizer,
-    torch_dtype=torch.bfloat16,
-    trust_remote_code=True,
-    device_map="auto",
-    max_length=200,
-    do_sample=True,
-    top_k=10,
-    num_return_sequences=1,
-    eos_token_id=tokenizer.eos_token_id
-)
+# pipeline = pipeline(
+#     "text-generation", #task
+#     model=model,
+#     tokenizer=tokenizer,
+#     torch_dtype=torch.bfloat16,
+#     trust_remote_code=True,
+#     device_map="auto",
+#     max_length=200,
+#     do_sample=True,
+#     top_k=10,
+#     num_return_sequences=1,
+#     eos_token_id=tokenizer.eos_token_id
+# )
 
 def get_blog_text(blog_url):
   text = ""
@@ -83,10 +84,14 @@ def get_conversation_chain(vectorstore):
   n_gpu_layers = 40
   n_batch = 512
 
-  #Loading Model
-  llm = HuggingFacePipeline(pipeline = pipeline, model_kwargs = {'temperature':0})
+  # Loading Model - GPT
+  config = {'max_new_tokens': 256, 'repetition_penalty': 1.1}
+  llm = CTransformers(model='marella/gpt-2-ggml', config=config)
+    
+  #Loading Model - Falcon
+  # llm = HuggingFacePipeline(pipeline = pipeline, model_kwargs = {'temperature':0})
 
- #Loading model,
+ #Loading model - Llama
   # llm = LlamaCpp(
   #     model_path=model_path,
   #     max_tokens=256,
