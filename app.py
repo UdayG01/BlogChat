@@ -31,10 +31,32 @@ import os
 huggingfacehub_api_token = os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
 
 
-model_name_or_path = "TheBloke/Llama-2-7b-Chat-GGUF"
-model_basename = "llama-2-7b-chat.Q2_K.gguf"
+# model_name_or_path = "TheBloke/Llama-2-7b-Chat-GGUF"
+# model_basename = "llama-2-7b-chat.Q2_K.gguf"
 
-model_path = hf_hub_download(repo_id=model_name_or_path, filename=model_basename)
+# model_path = hf_hub_download(repo_id=model_name_or_path, filename=model_basename)
+
+from langchain import HuggingFacePipeline
+from transformers import AutoTokenizer, pipeline
+import torch
+
+model = "tiiuae/falcon-7b-instruct" #tiiuae/falcon-40b-instruct
+
+tokenizer = AutoTokenizer.from_pretrained(model)
+
+pipeline = pipeline(
+    "text-generation", #task
+    model=model,
+    tokenizer=tokenizer,
+    torch_dtype=torch.bfloat16,
+    trust_remote_code=True,
+    device_map="auto",
+    max_length=200,
+    do_sample=True,
+    top_k=10,
+    num_return_sequences=1,
+    eos_token_id=tokenizer.eos_token_id
+)
 
 def get_blog_text(blog_url):
   text = ""
@@ -61,15 +83,18 @@ def get_conversation_chain(vectorstore):
   n_gpu_layers = 40
   n_batch = 512
 
+  #Loading Model
+  llm = HuggingFacePipeline(pipeline = pipeline, model_kwargs = {'temperature':0})
+
  #Loading model,
-  llm = LlamaCpp(
-      model_path=model_path,
-      max_tokens=256,
-      n_gpu_layers=n_gpu_layers,
-      n_batch=n_batch,
-      n_ctx=2048,
-      verbose=False,
-  )
+  # llm = LlamaCpp(
+  #     model_path=model_path,
+  #     max_tokens=256,
+  #     n_gpu_layers=n_gpu_layers,
+  #     n_batch=n_batch,
+  #     n_ctx=2048,
+  #     verbose=False,
+  # )
 
   # repo_id = "google/flan-t5-xxl"
   # llm = HuggingFaceHub(repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_length": 64})
