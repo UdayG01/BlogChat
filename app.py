@@ -61,7 +61,7 @@ def get_conversation_chain(vectorstore):
   n_gpu_layers = 40
   n_batch = 512
 
-  Loading model,
+ #Loading model,
   llm = LlamaCpp(
       model_path=model_path,
       max_tokens=256,
